@@ -3,10 +3,11 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Caca = require('../models/caca');
+const { verificarToken, verificaAdminRole } = require('../middlewares/tokens');
 
 const app = express();
 
-app.get('/pedo', function(req, res) {
+app.get('/pedo', verificarToken, (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -38,7 +39,7 @@ app.get('/pedo', function(req, res) {
         });
 });
 
-app.post('/pedo', function(req, res) {
+app.post('/pedo', [verificarToken, verificaAdminRole], (req, res) => {
 
     let body = req.body;
 
@@ -66,7 +67,7 @@ app.post('/pedo', function(req, res) {
     });
 
 });
-app.put('/pedo/:id', function(req, res) {
+app.put('/pedo/:id', [verificarToken, verificaAdminRole], (req, res) => {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -87,7 +88,7 @@ app.put('/pedo/:id', function(req, res) {
     });
 });
 
-app.delete('/pedo/:id', function(req, res) {
+app.delete('/pedo/:id', [verificarToken, verificaAdminRole], (req, res) => {
 
     let id = req.params.id;
 

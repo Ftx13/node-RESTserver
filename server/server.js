@@ -6,14 +6,16 @@ const mongoose = require('mongoose');
 const app = express();
 
 const bodyParser = require('body-parser');
+const routes = require('./routes/index');
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
-app.use(require('./routes/user'));
+//configuracion global de rutal
+app.use(routes);
 
 
 mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useCreateIndex: true }, (err, res) => {
