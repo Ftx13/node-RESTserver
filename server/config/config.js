@@ -10,6 +10,6 @@ let urlDB;
 if (process.env.NODE_ENV === 'dev') {
     urlDB = 'mongodb://localhost:27017/coca';
 } else {
-    urlDB = 'mongodb+srv://ftx13:l2ykJHC1og9xVA2y@cluster0-msa3r.mongodb.net/Coca'
+    urlDB = process.env.MONGO_URI;
 }
 process.env.URLDB = urlDB;
