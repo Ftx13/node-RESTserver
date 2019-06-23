@@ -1,5 +1,7 @@
 require('./config/config');
 
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -21,7 +23,6 @@ app.use(express.static(path.resolve(__dirname, '../public')));
 
 //configuracion global de rutal
 app.use(routes);
-
 
 mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useCreateIndex: true }, (err, res) => {
     if (err) {
