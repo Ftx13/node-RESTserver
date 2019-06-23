@@ -1,23 +1,23 @@
+//Express
 const express = require('express');
 const fileUpload = require('express-fileupload');
+const app = express();
 //Node
 const fs = require('fs');
 const path = require('path');
-//modelos
+//Model
 const Caca = require('../models/caca');
-let Producto = require('../models/producto');
-
-const app = express();
+const Producto = require('../models/producto');
 
 // default options
-app.use(fileUpload());
+app.use(fileUpload({ useTempFiles: true }));
 
 app.put('/upload/:tipo/:id', (req, res) => {
 
     let tipo = req.params.tipo;
     let id = req.params.id;
 
-    if (req.file == 0) {
+    if (req.file == undefined) {
         return res.status(400).json({
             ok: false,
             err: {
@@ -26,12 +26,12 @@ app.put('/upload/:tipo/:id', (req, res) => {
         })
     }
     //Validar tipos
-    let tiposValidos = ['productos', 'cacas'];
+    let tiposValidos = ['producto', 'caca'];
     if (tiposValidos.indexOf(tipo) < 0) {
         return res.status(400).json({
             ok: false,
             err: {
-                messege: 'Los tipos permitidos son: ' + tiposValidos
+                messege: 'Los tipos permitidos son: ' + tiposValidos.join(',')
             }
         })
     }
@@ -56,7 +56,7 @@ app.put('/upload/:tipo/:id', (req, res) => {
     let nombreArchivo = `${id} + ${new Date().getMilliseconds()}.${extensiones}`;
 
 
-    file.mv(`uploads/${ tipo }/${ nombreArchivo }`, (err) => {
+    file.mv(`upload/${ tipo }/${ nombreArchivo }`, (err) => {
         if (err)
             return res.status(500).json({
                 ok: false,
@@ -64,7 +64,7 @@ app.put('/upload/:tipo/:id', (req, res) => {
             });
 
         //aqui, imagen cargada
-        if (tipo === 'cacas') {
+        if (tipo === 'caca') {
             imagenCaca(id, res, nombreArchivo);
         } else {
             imagenProducto(id, res, nombreArchivo);
@@ -77,14 +77,14 @@ function imagenProducto(id, res, nombreArchivo) {
 
     Producto.findById(id, (err, productoDB) => {
         if (err) {
-            borrarArchivo(nombreArchivo, 'productos');
+            borrarArchivo(nombreArchivo, 'producto');
             return res.status(500).json({
                 ok: false,
                 err
             })
         }
         if (!productoDB) {
-            borrarArchivo(nombreArchivo, 'productos');
+            borrarArchivo(nombreArchivo, 'producto');
             return res.status(400).json({
                 ok: false,
                 err: {
@@ -94,7 +94,7 @@ function imagenProducto(id, res, nombreArchivo) {
             });
         }
 
-        borrarArchivo(productoDB.img, 'productos')
+        borrarArchivo(productoDB.img, 'producto')
 
         productoDB.img = nombreArchivo;
 
@@ -112,14 +112,14 @@ function imagenCaca(id, res, nombreArchivo) {
 
     Caca.findById(id, (err, cacaDB) => {
         if (err) {
-            borrarArchivo(nombreArchivo, 'cacas');
+            borrarArchivo(nombreArchivo, 'caca');
             return res.status(500).json({
                 ok: false,
                 err
             })
         }
         if (!cacaDB) {
-            borrarArchivo(nombreArchivo, 'cacas');
+            borrarArchivo(nombreArchivo, 'caca');
             return res.status(400).json({
                 ok: false,
                 err: {
@@ -128,7 +128,7 @@ function imagenCaca(id, res, nombreArchivo) {
             });
         }
 
-        borrarArchivo(cacaDB.img, 'cacas');
+        borrarArchivo(cacaDB.img, 'caca');
 
         cacaDB.img = nombreArchivo;
 
@@ -144,7 +144,7 @@ function imagenCaca(id, res, nombreArchivo) {
 
 function borrarArchivo(nombreImagen, tipo) {
     //antes de borra debe de existit el PAth de la imagen
-    let pathImagen = path.resolve(__dirname, `../../uploads/${tipo}/${nombreImagen}`);
+    let pathImagen = path.resolve(__dirname, `../../upload/${tipo}/${nombreImagen}`);
 
     if (fs.existsSync(pathImagen)) {
         fs.unlinkSync(pathImagen); //borrar imagen con el path
