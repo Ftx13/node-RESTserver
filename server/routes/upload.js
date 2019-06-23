@@ -17,11 +17,11 @@ app.put('/upload/:tipo/:id', (req, res) => {
     let tipo = req.params.tipo;
     let id = req.params.id;
 
-    if (!req.file) {
+    if (req.file == false) {
         return res.status(400).json({
             ok: false,
             err: {
-                messege: 'No haz seleccionada un archivo'
+                messege: 'No haz seleccionada un archivo',
             }
         })
     }
