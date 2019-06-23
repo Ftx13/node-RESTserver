@@ -17,7 +17,7 @@ app.put('/upload/:tipo/:id', (req, res) => {
     let tipo = req.params.tipo;
     let id = req.params.id;
 
-    if (req.file == undefined) {
+    if (!req.file) {
         return res.status(400).json({
             ok: false,
             err: {
