@@ -10,7 +10,7 @@ app.get('/imagen/:tipo/:img', verificaTokenImg, (req, res) => {
     let img = req.params.img;
 
 
-    let pathImagen = path.resolve(__dirname, `../../uploads/${tipo}/${img}`);
+    let pathImagen = path.resolve(__dirname, `../../upload/${tipo}/${img}`);
 
     if (fs.existsSync(pathImagen)) {
         res.sendFile(pathImagen);
